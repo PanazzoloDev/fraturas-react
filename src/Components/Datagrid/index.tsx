@@ -1,12 +1,5 @@
-import { columnDatagridType } from "../../Commons/types"
 
-type DatagridProps = {
-    columns: columnDatagridType[],
-    data: object[],
-    fetchData: () => void
-}
-
-const Datagrid = (props: DatagridProps) => {
+const Datagrid = () => {
 
     return (
         <table>
