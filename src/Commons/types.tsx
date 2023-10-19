@@ -8,11 +8,11 @@ interface responseType {
     data?: object;
 }
 type columnDatagridType = {
-    Header?: string,
+    header?: string,
     accessor: string,
     width?: number,
     minWidth?: number,
-    align?: "right" | "center" | "left",
+    alignment?: "right" | "center" | "left",
     filter?: "equals" | "contains",
 }
 

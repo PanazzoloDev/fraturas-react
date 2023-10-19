@@ -1,15 +1,14 @@
 import { action, observable } from "mobx";
 import { API } from "../../Services/BaseAPI";
-import { columnDatagridType } from "../../Commons/types";
 
 class BaseDatagridStore<T> {
-    @observable columns: columnDatagridType[]
+    @observable columns: unknown;
     @observable endpoint: string;
     @observable data: T[];
 
     constructor(
         endpoint: string,
-        columns: columnDatagridType[],
+        columns: unknown,
     ) {
         this.columns = columns;
         this.endpoint = endpoint;
