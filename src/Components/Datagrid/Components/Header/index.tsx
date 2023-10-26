@@ -3,14 +3,31 @@ import { HeaderCell, TableHeader } from "./style"
 
 type headerProps = {
     columns: columnDatagridType[]
+    hasActionColumn: boolean
 }
 
 const Header = (props: headerProps) => {
+    const { hasActionColumn, columns } = props
+
     return (
         <TableHeader>
-            {props.columns.map(column =>
-                <HeaderCell key={column.accessor}>{column.header}</HeaderCell>
+            {columns.map(column =>
+                <HeaderCell
+                    key={column.accessor}
+                    width={column.width}
+                >
+                    {column.header}
+                </HeaderCell>
             )}
+            {hasActionColumn ?
+                <HeaderCell
+                    key={999}
+                    width={50}
+                >
+                    {'Ações'}
+                </HeaderCell>
+                : null
+            }
         </TableHeader>
     )
 }

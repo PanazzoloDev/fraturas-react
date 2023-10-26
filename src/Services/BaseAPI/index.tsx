@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { responseType } from '../../Commons/types';
 
@@ -6,12 +7,17 @@ export const API = axios.create({
 });
 
 export const handleError = (error: Error): Promise<Error> => {
-  // Lógica de tratamento de erros
+  window.Snackbar({
+    open: true,
+    label: error.message,
+    type: 'error',
+    duration: 6000
+  });
   return Promise.reject(new Error(error.message || 'Erro na requisição.'));
 }
 
 export const Authenticate = async (username: string, password: string): Promise<responseType> => {
-  return API. 
+  return API.
     post(`/login?username=${username}&password=${password}`)
     .then((response: AxiosResponse) => response.data)
     .catch(handleError);

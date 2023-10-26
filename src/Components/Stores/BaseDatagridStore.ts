@@ -1,17 +1,23 @@
 import { action, observable } from "mobx";
+import { columnDatagridType, toolbarActionType } from "../../Commons/types";
 import { API } from "../../Services/BaseAPI";
 
+type BaseDatagridStoreProps = {
+    endpoint: string,
+    columns: columnDatagridType[],
+    toolbarActions?: toolbarActionType[]
+}
+
 class BaseDatagridStore<T> {
-    @observable columns: unknown;
+    @observable columns: columnDatagridType[];
     @observable endpoint: string;
+    @observable toolbarActions: toolbarActionType[]
     @observable data: T[];
 
-    constructor(
-        endpoint: string,
-        columns: unknown,
-    ) {
-        this.columns = columns;
-        this.endpoint = endpoint;
+    constructor(props: BaseDatagridStoreProps) {
+        this.columns = props.columns;
+        this.endpoint = props.endpoint;
+        this.toolbarActions = props.toolbarActions;
     }
 
     @action

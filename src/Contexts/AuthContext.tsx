@@ -1,14 +1,22 @@
+import { isEmpty, replace } from "lodash";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { userType } from "../Commons/types";
+import { snackbarProps, userType } from "../Commons/types";
 import { API, Authenticate } from "../Services/BaseAPI";
+
+declare global {
+    interface Window {
+        Snackbar: (props: snackbarProps) => void;
+    }
+}
 
 type contextPropsType = {
     authenticated: boolean,
     loading: boolean,
     user?: object,
     authenticate: (username: string, password: string) => object,
-    logout: () => void
+    logout: () => void,
+    snackbarProps: snackbarProps
 };
 
 type authResponseType = {
@@ -24,13 +32,19 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const [user, setUser] = useState<object>();
     const [loading, setLoading] = useState<boolean>(true);
+    const [snackbarProps, setSnackbarProps] = useState<snackbarProps>({
+        label: 'teste',
+        open: false,
+        type: "success"
+    });
 
     useEffect(() => {
         const tryRecoverData = async () => {
             const recoveredUser = localStorage.getItem('user');
-            const recoveredToken = localStorage.getItem('token');
+            let recoveredToken = localStorage.getItem('token');
 
-            if (recoveredUser && recoveredToken) {
+            recoveredToken = replace(recoveredToken, "\"", "")
+            if (recoveredUser && !isEmpty(recoveredToken)) {
                 setUser(JSON.parse(recoveredUser));
                 API.defaults.headers.Authorization = 'Bearer ' + recoveredToken;
             } else {
@@ -39,6 +53,10 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             await setLoading(false);
         }
         tryRecoverData();
+
+        window.Snackbar = (props: snackbarProps) => {
+            setSnackbarProps(props)
+        }
     }, [])
 
     const authenticate = (username: string, password: string) => {
@@ -49,9 +67,11 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     const { user, token } = response.data as authResponseType
                     setUser(user);
 
-                    API.defaults.headers.Authorization = `Bearer " + ${token}`;
                     localStorage.setItem('user', JSON.stringify(user));
-                    localStorage.setItem('token', JSON.stringify(token));
+                    localStorage.setItem('token', token);
+
+                    const authHeader = `Bearer ${replace(token, "\"", "")}`
+                    API.defaults.headers.Authorization = authHeader;
 
                     setLoading(false);
                     navigate('/home');
@@ -75,14 +95,14 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 loading,
                 user,
                 authenticate,
-                logout
+                logout,
+                snackbarProps
             }}
         >
             {children}
         </AuthContext.Provider>
     )
 }
-
 const useAuthContext = () => {
     const context = useContext(AuthContext);
     if (!context) {

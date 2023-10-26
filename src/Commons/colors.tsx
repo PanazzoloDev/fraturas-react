@@ -1,6 +1,6 @@
 // const primary = '#2e346bcd';
-const primary = '#1f255bcd';
-const secondary = '#cdcdcdcd';
+const primary = '#1f255b';
+const secondary = '#cdcdcd';
 const terciary = 'cyan';
 
 export {

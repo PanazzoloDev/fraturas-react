@@ -1,10 +1,10 @@
 import Page from '../../Components/Containers/Page';
-import Datagrid from '../../Components/Datagrid';
+import DatagridContainer from './Containers/DatagridContainer';
 
 const UsersScreen = (): React.ReactNode => {
     return (
         <Page>
-            <Datagrid />
+            <DatagridContainer />
         </Page>
     )
 }

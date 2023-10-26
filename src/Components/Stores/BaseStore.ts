@@ -45,19 +45,16 @@ class BaseStore {
 
     @action
     submit = () => {
-        console.log(this);
-        let response = null;
         switch (this.storeMode) {
             case 'Create':
-                response = isFunction(this.post) ? this.post(this.controls) : () => { };
+                isFunction(this.post) ? this.post(this.controls) : () => { };
                 break;
             case 'Update':
-                response = isFunction(this.put) ? this.put(this.controls) : () => { };
+                isFunction(this.put) ? this.put(this.controls) : () => { };
                 break;
             default:
                 break;
         }
-        console.log(response);
     }
 
     @action

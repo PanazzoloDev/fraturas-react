@@ -1,17 +1,35 @@
 import styled from "styled-components";
-import { primary, secondary, terciary } from "../../../../Commons/colors";
+import { primary, secondary } from "../../../../Commons/colors";
 
-const TableHeader = styled.tr<{children: React.ReactNode}>`
+const TableHeader = styled.tr<{ children: React.ReactNode }>`
     background-color: ${primary};
+    font-weight: bold;
     text-align: center;
-    color: ${terciary};
+    vertical-align: middle;
+    color: ${secondary};
     height: 2em;
 `
-const HeaderCell = styled.td<{children: React.ReactNode}>`
-    vertical-align: middle;
-    border-left: 1px solid ${secondary};
-`
-export{
-    TableHeader,
-    HeaderCell
+type headerCellProps = {
+    children: React.ReactNode,
+    width?: number,
+    maxWidth?: number
 }
+
+const HeaderCell = styled.td<headerCellProps>`
+    vertical-align: middle;
+    width: ${(props) => props.width ?? 'fit-content'}px;
+    max-width: ${(props) => props.maxWidth ?? 'auto'}px;
+    &:hover{
+        background: linear-gradient(${primary} 85%, ${secondary} 90%, ${primary});
+        background-color: ${primary};
+        color: ${secondary};
+        cursor: pointer;
+    }
+    &:active{
+        background-color: ${secondary};
+    }
+`
+export {
+    HeaderCell, TableHeader
+};
+

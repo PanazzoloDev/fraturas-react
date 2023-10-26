@@ -1,21 +1,34 @@
-import { get } from "lodash";
 import { userType } from "../../../Commons/types";
 import BaseDatagridStore from "../../../Components/Stores/BaseDatagridStore";
 
 class DatagridUsersStore extends BaseDatagridStore<userType>{
     constructor() {
-        super(
-            '/users',
-            [{
-                accessorKey: 'firstName',
-                header: 'First Name',
-            },
-            {
-                accessorFn: (row: unknown) => get(row, 'firstName'),
-                header: () => <span>Last Name</span>,
-            }]
+        super({
+            endpoint: '/users',
+            columns: [
+                {
+                    header: 'Code',
+                    accessor: 'id',
+                    alignment: 'center',
+                    width: 20
+                },
+                {
+                    header: 'Nome',
+                    accessor: 'name',
+                    alignment: 'left',
+                    width: 150
+                },
+                {
+                    header: 'Senha',
+                    accessor: 'password',
+                    alignment: 'center',
+                    width: 250
+                },
+            ]
+        }
         );
     }
 }
 
-export default DatagridUsersStore
+const store = new DatagridUsersStore();
+export default store;

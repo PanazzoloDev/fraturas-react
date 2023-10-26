@@ -1,46 +1,77 @@
 import { get } from "lodash"
-import { columnDatagridType } from "../../Commons/types"
+import { useEffect, useState } from 'react'
+import { columnDatagridType, rowActionType, toolbarActionType } from "../../Commons/types"
+import { API } from "../../Services/BaseAPI"
 import Header from "./Components/Header"
 import Row from "./Components/Row"
-import { Table } from "./style"
+import SearchInput from "./Components/SearchInput"
+import ToolbarAction from "./Components/ToolbarAction"
+import {
+    DatagridContainer,
+    Table,
+    ToolbarContainer
+} from "./style"
 
-const data = [
-    { id: 1, name: 'Wesley Panazzolo', email: 'wesley.panazzolo@gmail.com', adress: 'R. Dom Rafael Nro 630' },
-    { id: 2, name: 'Carlos Maciel', email: 'carlos.maciel@gmail.com', adress: 'R. Dom Rafael Nro 630' },
-    { id: 3, name: 'Luiz Gustavo', email: 'luiz.gustavo@gmail.com', adress: 'R. Dom Rafael Nro 630' },
-    { id: 4, name: 'Robert Gusman', email: 'robert.gusman@gmail.com', adress: 'R. Dom Rafael Nro 630' },
-    { id: 5, name: 'Daniel Jacob', email: 'daniel.jacob@gmail.com', adress: 'R. Dom Rafael Nro 630' },
-    { id: 6, name: 'Juan Carlos', email: 'juan.carlos@gmail.com', adress: 'R. Dom Rafael Nro 630' },
-    { id: 7, name: 'Caleb Maicom', email: 'caleb.maicom@gmail.com', adress: 'R. Dom Rafael Nro 630' },
-    { id: 8, name: 'Ryan Souza', email: 'ryan.souza@gmail.com', adress: 'R. Dom Rafael Nro 630' },
-    { id: 9, name: 'Julia Sena', email: 'julia.sena@gmail.com', adress: 'R. Dom Rafael Nro 630' },
-    { id: 10, name: 'Carla Prates', email: 'carla.prates@gmail.com', adress: 'R. Dom Rafael Nro 630' }
-]
+type datagridProps = {
+    endpoint: string
+    columns: columnDatagridType[]
+    toolbarActions?: toolbarActionType[]
+    rowActions?: rowActionType[]
+}
 
-const columns: Array<columnDatagridType> = [
-    { header: 'Code', accessor: 'id', alignment: 'center', width: 50 },
-    { header: 'Nome', accessor: 'name', alignment: 'left', width: 150 },
-    { header: 'Email', accessor: 'email', alignment: 'left', width: 250 },
-    { header: 'Endereço', accessor: 'adress', alignment: 'left', width: 500 },
-]
+const Datagrid = (props: datagridProps) => {
 
-const Datagrid = () => {
-    const accessors = columns.map(column => column.accessor)
+    const [datagridData, setDatagridData] = useState([]);
+    const { endpoint, columns, toolbarActions, rowActions } = props
+
+    const FetchData = () => {
+        API.get(endpoint)
+            .then((response) => {
+                if (get(response, 'status') === 200) {
+                    setDatagridData(get(response, 'data.data.data'))
+                }
+            })
+    }
+
+    useEffect(() => {
+        FetchData()
+    }, []);
+
     return (
-        <Table>
-            <thead>
-                <Header columns={columns} />
-            </thead>
-            <tbody>
-                {data.map(object =>
-                    <Row
-                        key={get(object, 'id')}
-                        object={object}
-                        accessors={accessors}
+        <DatagridContainer>
+            <ToolbarContainer>
+                <div>
+                    {toolbarActions.map(act =>
+                        <ToolbarAction
+                            key={act.key}
+                            onClick={act.onClick}
+                            icon={() => act.icon()}
+                        />
+                    )}
+                </div>
+                <SearchInput
+                    onSearch={() => alert('Search')}
+                />
+            </ToolbarContainer>
+            <Table>
+                <thead>
+                    <Header
+                        columns={columns}
+                        hasActionColumn={!!rowActions}
                     />
-                )}
-            </tbody>
-        </Table>
+                </thead>
+                <tbody>
+                    {datagridData.map(object =>
+                        <Row
+                            key={get(object, 'id')}
+                            object={object}
+                            columns={columns}
+                            rowActions={rowActions}
+                        />
+                    )}
+                </tbody>
+            </Table>
+        </DatagridContainer>
     )
 }
 
